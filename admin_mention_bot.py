@@ -14,7 +14,6 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     chat_id = update.effective_chat.id
     message_text = update.message.text
-    # Remove trigger phrase (.admin, @admin, /admin)
     cleaned_text = TRIGGER_PATTERN.sub("", message_text).strip()
 
     sender = update.effective_user
@@ -23,19 +22,20 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_display += f" (@{sender.username})"
     notify_emoji = "🔔"
 
-    # Add an empty line for spacing after the second blockquote
     reply_msg = (
         f"<blockquote><b>A new report has been submitted and requires your review. ⚠️</b></blockquote>\n"
         f"<blockquote><b><i>\"{cleaned_text}\"</i></b> from {user_display} {notify_emoji}</blockquote>\n\n"
     )
 
-    # Build admin mention list (outside HTML to trigger actual notifications)
+    # Build admin mention list (skipping anonymous and ALL bots)
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
         if admin.is_anonymous:
             continue
         user = admin.user
+        if user.is_bot:
+            continue
         if user.username:
             mentions.append(f'@{user.username}')
         else:
@@ -44,7 +44,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if mentions:
         reply_msg += " ".join(mentions) + "\n"
     else:
-        reply_msg += "No visible admins found to mention.\n"
+        reply_msg += "No visible human admins found to mention.\n"
 
     await update.message.reply_html(reply_msg)
 
