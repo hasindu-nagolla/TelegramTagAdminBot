@@ -22,19 +22,27 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_display += f" (@{sender.username})"
     notify_emoji = "🔔"
 
+    # If user sends only trigger with no message
+    if not cleaned_text:
+        warning_msg = (
+            f"<blockquote><b>You can't mention admins without a reason. ⚠️</b></blockquote>\n"
+            f"<blockquote>Please include a message. Example: <b>@admin your_complaint</b></blockquote>"
+        )
+        await update.message.reply_html(warning_msg)
+        return
+
+    # Formatted complaint message
     reply_msg = (
         f"<blockquote><b>A new report has been submitted and requires your review. ⚠️</b></blockquote>\n"
         f"<blockquote><b><i>\"{cleaned_text}\"</i></b> from {user_display} {notify_emoji}</blockquote>\n\n"
     )
 
-    # Build admin mention list (skipping anonymous and ALL bots)
+    # Build admin mentions (skip bots and anonymous)
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
-        if admin.is_anonymous:
-            continue
         user = admin.user
-        if user.is_bot:
+        if admin.is_anonymous or user.is_bot:
             continue
         if user.username:
             mentions.append(f'@{user.username}')
