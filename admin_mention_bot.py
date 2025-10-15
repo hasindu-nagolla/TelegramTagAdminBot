@@ -23,7 +23,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     notify_emoji = "🔔"
 
     reply_msg = (
-        f"<blockquote>A new report has been submitted and requires your review. 📢</blockquote>\n"
+        f"<blockquote>A new report has been submitted and requires your review. 🚨</blockquote>\n"
         f"<blockquote><b>\"{cleaned_text}\"</b> from {user_display} {notify_emoji}</blockquote>"
     )
     admins = await context.bot.getChatAdministrators(chat_id)
