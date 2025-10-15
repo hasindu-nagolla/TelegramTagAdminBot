@@ -14,28 +14,40 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     chat_id = update.effective_chat.id
     message_text = update.message.text
-    # Remove .admin, @admin, /admin trigger from message
+    # Remove trigger (.admin, @admin, /admin)
     cleaned_text = TRIGGER_PATTERN.sub("", message_text).strip()
+    
     sender = update.effective_user
     user_display = f"{sender.first_name}"
     if sender.username:
         user_display += f" (@{sender.username})"
+    
     notify_emoji = "🔔"
 
+    # Attention-styled report
     reply_msg = (
-        f"<blockquote>A new report has been submitted and requires your review. 🚨</blockquote>\n"
-        f"<blockquote><b>\"{cleaned_text}\"</b> from {user_display} {notify_emoji}</blockquote>"
+        f"<blockquote><b><i>⚠️ A new report has been submitted and requires your review. 📢</i></b></blockquote>\n"
+        f"<blockquote><b><i>\"{cleaned_text}\"</i></b> from {user_display} {notify_emoji}</blockquote>"
     )
+    
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
         user = admin.user
+        # Skip anonymous admins
+        if admin.is_anonymous:
+            continue
         if user.username:
             mentions.append(f'@{user.username}')
         else:
             mentions.append(user.first_name)
-    admin_mentions = ", ".join(mentions)
-    reply_msg += f"\n<blockquote>{admin_mentions}</blockquote>"
+    
+    if mentions:
+        admin_mentions = ", ".join(mentions)
+        reply_msg += f"\n<blockquote>{admin_mentions}</blockquote>"
+    else:
+        reply_msg += "\n<blockquote>No visible admins found to mention.</blockquote>"
+    
     await update.message.reply_html(reply_msg)
 
 if __name__ == "__main__":
