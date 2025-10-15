@@ -8,11 +8,16 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message:           # Safeguard in case update contains no message
+    if not update.message:
         return
     chat_id = update.effective_chat.id
     message_text = update.message.text
-    sender = update.effective_user.mention_html()
+    sender = update.effective_user
+    # Format username (bold)
+    user_display = f"<b>{sender.first_name}</b>"
+    if sender.username:
+        user_display += f" (@{sender.username})"
+    notify_emoji = "🔔"
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
@@ -22,20 +27,18 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             mentions.append(user.first_name)
     admin_mentions = ", ".join(mentions)
-    # Reply with user's original message and admin mentions
     reply = (
-        f"<b>{message_text}</b>\n"
-        f"{admin_mentions}"
+        f"Hello admins, some report has to mention to you\n"
+        f"<blockquote>{message_text} from {user_display} {notify_emoji}</blockquote>\n"
+        f"<blockquote>{admin_mentions}</blockquote>"
     )
     await update.message.reply_html(reply)
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-    # Handles /admin
     admin_handler = CommandHandler("admin", mention_admins)
-    # Handles .admin, @admin, /admin, case-insensitive
     regex_handler = MessageHandler(
-        filters.Regex(r"(?i)(\.|@|\/)admin"), 
+        filters.Regex(r"(?i)(\.|@|\/)admin"),
         mention_admins
     )
     app.add_handler(admin_handler)
