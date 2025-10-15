@@ -26,7 +26,7 @@ if __name__ == "__main__":
     admin_handler = CommandHandler("admin", mention_admins)
     # Regex: matches '.admin', '@admin', '/admin' anywhere in text (case insensitive)
     regex_handler = MessageHandler(
-        filters.Regex(r"(?i)(\.|@|\/)admin")
+        filters.Regex(r"(?i)(\.|@|\/)admin"),
         mention_admins
     )
     app.add_handler(admin_handler)
