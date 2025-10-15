@@ -25,7 +25,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Add an empty line for spacing after the second blockquote
     reply_msg = (
-        f"<blockquote><b><i>⚠️ A new report has been submitted and requires your review. 📢</i></b></blockquote>\n"
+        f"<blockquote><b>A new report has been submitted and requires your review. ⚠️</b></blockquote>\n"
         f"<blockquote><b><i>\"{cleaned_text}\"</i></b> from {user_display} {notify_emoji}</blockquote>\n\n"
     )
 
@@ -37,9 +37,9 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
             continue
         user = admin.user
         if user.username:
-            mentions.append(f'@{user.username}')   # This triggers a notification
+            mentions.append(f'@{user.username}')
         else:
-            mentions.append(user.first_name)       # Fallback if no username
+            mentions.append(user.first_name)
 
     if mentions:
         reply_msg += " ".join(mentions) + "\n"
