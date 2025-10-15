@@ -7,7 +7,6 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Regex pattern to remove .admin, @admin, /admin (case-insensitive)
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
 
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -15,15 +14,19 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     chat_id = update.effective_chat.id
     message_text = update.message.text
-    # Remove the trigger phrase from the message
+    # Remove .admin, @admin, /admin trigger from message
     cleaned_text = TRIGGER_PATTERN.sub("", message_text).strip()
-    # Format cleaned message in bold quotes
-    display_message = f"<b>\"{cleaned_text}\"</b>"
     sender = update.effective_user
     user_display = f"{sender.first_name}"
     if sender.username:
         user_display += f" (@{sender.username})"
     notify_emoji = "🔔"
+
+    # Build the message
+    reply_msg = (
+        f"<blockquote>Hello admins, some report has to mention to you</blockquote>\n"
+        f"<blockquote><b>\"{cleaned_text}\"</b> from {user_display} {notify_emoji}</blockquote>"
+    )
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
@@ -33,11 +36,8 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             mentions.append(user.first_name)
     admin_mentions = ", ".join(mentions)
-    reply = (
-        f"{display_message} from {user_display} {notify_emoji}\n"
-        f"<blockquote>{admin_mentions}</blockquote>"
-    )
-    await update.message.reply_html(reply)
+    reply_msg += f"\n<blockquote>{admin_mentions}</blockquote>"
+    await update.message.reply_html(reply_msg)
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
