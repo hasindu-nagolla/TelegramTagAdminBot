@@ -9,6 +9,8 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
+    message_text = update.message.text
+    sender = update.effective_user.mention_html()
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
@@ -17,16 +19,21 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
             mentions.append(f'@{user.username}')
         else:
             mentions.append(user.first_name)
-    message = "🔔 Calling admins: " + " ".join(mentions)
-    await context.bot.send_message(chat_id=chat_id, text=message)
+    admin_mentions = ", ".join(mentions)
+    # Reply with original message and admin mentions
+    reply = (
+        f"<b>{message_text}</b>\n"
+        f"{admin_mentions}"
+    )
+    await update.message.reply_html(reply)
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-    # Command: /admin
+    # Handles /admin
     admin_handler = CommandHandler("admin", mention_admins)
-    # Regex: matches '.admin', '@admin', '/admin' anywhere in text (case insensitive)
+    # Handles .admin, @admin, /admin, case-insensitive
     regex_handler = MessageHandler(
-        filters.Regex(r"(?i)(\.|@|\/)admin"),
+        filters.Regex(r"(?i)(\.|@|\/)admin"), 
         mention_admins
     )
     app.add_handler(admin_handler)
