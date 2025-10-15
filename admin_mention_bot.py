@@ -8,6 +8,8 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message:           # Safeguard in case update contains no message
+        return
     chat_id = update.effective_chat.id
     message_text = update.message.text
     sender = update.effective_user.mention_html()
@@ -20,7 +22,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             mentions.append(user.first_name)
     admin_mentions = ", ".join(mentions)
-    # Reply with original message and admin mentions
+    # Reply with user's original message and admin mentions
     reply = (
         f"<b>{message_text}</b>\n"
         f"{admin_mentions}"
