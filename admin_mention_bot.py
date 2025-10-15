@@ -22,9 +22,8 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_display += f" (@{sender.username})"
     notify_emoji = "🔔"
 
-    # Build the message
     reply_msg = (
-        f"<blockquote>Hello admins, some report has to mention to you</blockquote>\n"
+        f"<blockquote>A new report has been submitted and requires your review. 📢</blockquote>\n"
         f"<blockquote><b>\"{cleaned_text}\"</b> from {user_display} {notify_emoji}</blockquote>"
     )
     admins = await context.bot.getChatAdministrators(chat_id)
