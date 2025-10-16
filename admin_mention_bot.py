@@ -16,6 +16,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
 
+
 # === Handle Inline Button Clicks (Admins only) ===
 async def handle_admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -23,11 +24,11 @@ async def handle_admin_response(update: Update, context: ContextTypes.DEFAULT_TY
     user = query.from_user
     chat = query.message.chat
 
-    # Get all chat admins
+    # Get chat admins
     chat_admins = await context.bot.getChatAdministrators(chat.id)
     admin_ids = [admin.user.id for admin in chat_admins if not admin.is_anonymous]
 
-    # Check if the clicking user is an admin
+    # Restrict button clicks to admins only
     if user.id not in admin_ids:
         await query.answer("Only admins can use these buttons.", show_alert=True)
         return
@@ -45,7 +46,7 @@ async def handle_admin_response(update: Update, context: ContextTypes.DEFAULT_TY
     )
 
 
-# === Main Function for Mentioning Admins ===
+# === Main Mention Function ===
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
@@ -60,7 +61,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_display += f" (@{sender.username})"
     notify_emoji = "🔔"
 
-    # If user sends only @admin/.admin without message
+    # If user sends only @admin/.admin without a message
     if not cleaned_text:
         warning_msg = (
             f"<blockquote><b>⚠️ You can't mention admins without a reason.</b></blockquote>\n"
@@ -69,13 +70,12 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_html(warning_msg)
         return
 
-    # Main message formatting
+    # Build main report message (without title block)
     reply_msg = (
-        f"<blockquote><b>🆘 A user needs admin attention! 🕵️</b></blockquote>\n"
         f"<blockquote><b><i>\"{cleaned_text}\"</i></b>\nReported by: {user_display} {notify_emoji}</blockquote>\n\n"
     )
 
-    # Collect all real (non-bot, non-anonymous) admins
+    # Collect real (non-bot, non-anonymous) admins
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
     for admin in admins:
@@ -92,7 +92,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         reply_msg += "No visible human admins found to mention.\n"
 
-    # Inline buttons for admin actions (admin-only)
+    # Inline buttons for admin actions (restricted to admins)
     keyboard = [
         [
             InlineKeyboardButton("✅ Handled", callback_data="handled"),
