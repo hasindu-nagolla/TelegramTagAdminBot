@@ -1,138 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Alert — Telegram Bot</title>
 <meta name="description" content="Add @NovaMentionBot to your Telegram group — the Admin Alert bot that helps report issues instantly and keep groups under control." />
 <link rel="icon" href="https://img.icons8.com/color/96/telegram-app.png" />
 <style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #141E30, #243B55);
-        color: white;
-        text-align: center;
-        overflow-x: hidden;
-    }
-    header {
-        padding: 60px 20px 20px;
-        animation: fadeIn 1.5s ease;
-    }
-    header h1 {
-        font-size: 3em;
-        color: #00d4ff;
-        text-shadow: 0 0 10px #00d4ff, 0 0 30px #00d4ff;
-        letter-spacing: 2px;
-    }
-    header p {
-        font-size: 1.2em;
-        color: #f0f0f0;
-    }
-    .glow {
-        animation: glowPulse 2s infinite alternate;
-    }
-    @keyframes glowPulse {
-        from { text-shadow: 0 0 10px #00d4ff; }
-        to   { text-shadow: 0 0 30px #00d4ff, 0 0 60px #00d4ff; }
-    }
-    section {
-        margin: 50px auto;
-        width: 90%;
-        max-width: 800px;
-    }
-    .cta-btn {
-        display: inline-block;
-        background: #00d4ff;
-        color: #000;
-        text-transform: uppercase;
-        font-weight: bold;
-        padding: 15px 40px;
-        border-radius: 30px;
-        text-decoration: none;
-        font-size: 1.2em;
-        box-shadow: 0 0 20px #00d4ff;
-        transition: all 0.3s ease;
-    }
-    .cta-btn:hover {
-        background: #08f7ff;
-        box-shadow: 0 0 40px #00f4ff, 0 0 60px #00e1ff;
-        transform: scale(1.05);
-    }
-    footer {
-        margin: 60px 0 20px;
-        font-size: 0.9em;
-        color: #aaa;
-    }
-    .features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 25px;
-        margin-top: 30px;
-    }
-    .feature {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 20px;
-        border-radius: 15px;
-        transition: transform 0.3s ease;
-    }
-    .feature:hover {
-        transform: translateY(-5px);
-        background: rgba(0, 212, 255, 0.15);
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    background: linear-gradient(135deg,#141E30,#243B55);
+  }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+  }
+  .content {
+    flex: 1;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  header {
+    padding: 40px 10px 20px;
+    animation: fadeIn 1.2s cubic-bezier(.4,0,.6,1);
+    width: 100%;
+    text-align: center;
+  }
+  header h1 {
+    font-size: 3em;
+    color: #00d4ff;
+    text-shadow: 0 0 24px #00d4ff, 0 0 48px #00d4ff;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  header p {
+    font-size: 1.22em;
+    color: #f0f0f0;
+    margin-bottom: 20px;
+  }
+  .glow {
+    animation: glowPulse 2s infinite alternate;
+  }
+  @keyframes glowPulse {
+    from { text-shadow:0 0 8px #00d4ff;}
+    to   { text-shadow:0 0 40px #00d4ff,0 0 80px #00d4ff;}
+  }
+  .cta-btn {
+    margin: 32px 0 22px;
+    background:#00d4ff;
+    color:#000;
+    padding:18px 40px;
+    border-radius:30px;
+    text-transform:uppercase;
+    box-shadow:0 0 22px #00d4ff;
+    font-size:1.2em;
+    font-weight:700;
+    transition:.3s;
+    text-decoration: none;
+    letter-spacing: 1px;
+    display:inline-block;
+  }
+  .cta-btn:hover {
+    background:#08f7ff;
+    box-shadow:0 0 44px #00f4ff, 0 0 80px #00e1ff;
+    transform:scale(1.08);
+  }
+  .features {
+    width: 100%;
+    max-width: 820px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+    gap: 26px;
+    margin: 0 auto 32px auto;
+  }
+  .feature {
+    background: rgba(255,255,255,0.07);
+    padding: 24px 18px;
+    border-radius: 18px;
+    transition: .3s;
+    color: #fff;
+    min-height: 160px;
+    font-size: 1em;
+  }
+  .feature:hover {
+    background: rgba(0,212,255,0.16);
+    transform:translateY(-8px) scale(1.03);
+  }
+  @keyframes fadeIn {
+    from {opacity: 0;transform:translateY(20px);}
+    to   {opacity:1;transform:translateY(0);}
+  }
+  /* Root (footer) block styling */
+  .root-footer {
+    width: 100vw;
+    background: rgba(35,38,40,0.84);
+    box-shadow: 0 -2px 18px 0 rgba(52,152,219,0.08);
+    color: #d2d2d2;
+    text-align: center;
+    font-size: 1em;
+    padding: 14px 0 16px 0;
+    margin: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+    z-index: 120;
+    backdrop-filter: blur(2px);
+    letter-spacing: 0.03em;
+  }
+  .copyright {
+    margin: 0;
+    font-size: 1em;
+    line-height: 1.5;
+  }
+  .github-link {
+    color: #00d4ff;
+    text-decoration: underline;
+    font-weight: bold;
+    transition: color .24s;
+  }
+  .github-link:hover {
+    color: #fff;
+  }
+  @media (max-width:600px){
+    header h1 { font-size: 2em; }
+    .features {grid-template-columns: 1fr;}
+    .feature { font-size:0.98em; }
+  }
 </style>
 </head>
 <body>
-
-<header>
+<div class="content">
+  <header>
     <h1 class="glow">Admin Alert</h1>
     <p>The smart Telegram bot that instantly notifies all group admins with a beautifully formatted report message!</p>
-</header>
-
-<section>
-    <a href="https://t.me/NovaMentionBot" class="cta-btn" target="_blank">➕ Add @NovaMentionBot to Your Group</a>
-
-    <div class="features">
-        <div class="feature">
-            <h3>🚀 Real-time Admin Alerts</h3>
-            <p>Mentions admins instantly when a user reports an issue using <b>@admin</b>, <b>/admin</b>, or <b>.admin</b>.</p>
-        </div>
-        <div class="feature">
-            <h3>💬 Smart Inline Buttons</h3>
-            <p>Admins can quickly mark reports as <b>Handled</b>, <b>Investigating</b>, or <b>Ignored</b> — all in-chat.</p>
-        </div>
-        <div class="feature">
-            <h3>🛡️ Secure & VPS Ready</h3>
-            <p>Built with asynchronous Python and <b>python‑telegram‑bot</b> — fast, efficient, and secure for 24/7 uptime.</p>
-        </div>
+    <a href="https://t.me/NovaMentionBot" rel="noopener" target="_blank" class="cta-btn">➕ ADD @NOVAMENTIONBOT TO YOUR GROUP</a>
+  </header>
+  <div class="features">
+    <div class="feature">
+      <h3>🚀 Real-time Admin Alerts</h3>
+      <p>Mentions admins instantly when a user reports using <b>@admin</b>, <b>/admin</b>, or <b>.admin</b>.</p>
     </div>
-</section>
-
-<footer>
-    <p>© 2025 Admin Alert Bot | Built with ❤️ using Python & Telegram API</p>
-</footer>
-
+    <div class="feature">
+      <h3>💬 Smart Inline Buttons</h3>
+      <p>Admins mark reports as <b>Handled</b>, <b>Investigating</b>, or <b>Ignored</b> — instantly in chat.</p>
+    </div>
+    <div class="feature">
+      <h3>🛡️ Secure & VPS Ready</h3>
+      <p>Built in Python with <b>python-telegram-bot</b>. No analytics. VPS-ready for 24/7 uptime.</p>
+    </div>
+  </div>
+</div>
+<!-- root/footer is separate and visually distinct with gray/opacity -->
+<div class="root-footer">
+  <div class="copyright">
+    &copy; 2025 <b>Admin Alert Bot</b> | Developed by
+    <a href="https://github.com/hasindu-nagolla" target="_blank" class="github-link">@Hasindu-Nagolla</a>
+    &mdash; Built with ❤️ using Python &amp; Telegram API
+  </div>
+</div>
 <script>
-    // Simple animated gradient background
-    const colors = [
-        ['#141E30', '#243B55'],
-        ['#16222A', '#3A6073'],
-        ['#000046', '#1CB5E0']
-    ];
-    let step = 0, colorIndex = 0;
-    setInterval(() => {
-        const next = (colorIndex + 1) % colors.length;
-        const c1 = colors[colorIndex];
-        const c2 = colors[next];
-        document.body.style.background = `linear-gradient(135deg, ${c1[0]}, ${c2[1]})`;
-        colorIndex = next;
-        step++;
-    }, 4000);
+  // Animated dynamic gradient background
+  const colors = [
+    ['#141E30','#243B55'],
+    ['#16222A','#3A6073'],
+    ['#000046','#1CB5E0'],
+    ['#2C3E50','#3498DB'],
+    ['#141E30','#00d4ff']
+  ];
+  let colorIndex = 0;
+  setInterval(()=> {
+    const next = (colorIndex+1) % colors.length;
+    document.body.style.background = `linear-gradient(135deg,${colors[colorIndex][0]},${colors[next][1]})`;
+    colorIndex = next;
+  },3500)
 </script>
-
 </body>
 </html>
