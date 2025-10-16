@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Alert — Telegram Bot</title>
+<meta name="description" content="Add @NovaMentionBot to your Telegram group — the Admin Alert bot that helps report issues instantly and keep groups under control." />
+<link rel="icon" href="https://img.icons8.com/color/96/telegram-app.png" />
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #141E30, #243B55);
+        color: white;
+        text-align: center;
+        overflow-x: hidden;
+    }
+    header {
+        padding: 60px 20px 20px;
+        animation: fadeIn 1.5s ease;
+    }
+    header h1 {
+        font-size: 3em;
+        color: #00d4ff;
+        text-shadow: 0 0 10px #00d4ff, 0 0 30px #00d4ff;
+        letter-spacing: 2px;
+    }
+    header p {
+        font-size: 1.2em;
+        color: #f0f0f0;
+    }
+    .glow {
+        animation: glowPulse 2s infinite alternate;
+    }
+    @keyframes glowPulse {
+        from { text-shadow: 0 0 10px #00d4ff; }
+        to   { text-shadow: 0 0 30px #00d4ff, 0 0 60px #00d4ff; }
+    }
+    section {
+        margin: 50px auto;
+        width: 90%;
+        max-width: 800px;
+    }
+    .cta-btn {
+        display: inline-block;
+        background: #00d4ff;
+        color: #000;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 15px 40px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 1.2em;
+        box-shadow: 0 0 20px #00d4ff;
+        transition: all 0.3s ease;
+    }
+    .cta-btn:hover {
+        background: #08f7ff;
+        box-shadow: 0 0 40px #00f4ff, 0 0 60px #00e1ff;
+        transform: scale(1.05);
+    }
+    footer {
+        margin: 60px 0 20px;
+        font-size: 0.9em;
+        color: #aaa;
+    }
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+    .feature {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+    }
+    .feature:hover {
+        transform: translateY(-5px);
+        background: rgba(0, 212, 255, 0.15);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1 class="glow">Admin Alert</h1>
+    <p>The smart Telegram bot that instantly notifies all group admins with a beautifully formatted report message!</p>
+</header>
+
+<section>
+    <a href="https://t.me/NovaMentionBot" class="cta-btn" target="_blank">➕ Add @NovaMentionBot to Your Group</a>
+
+    <div class="features">
+        <div class="feature">
+            <h3>🚀 Real-time Admin Alerts</h3>
+            <p>Mentions admins instantly when a user reports an issue using <b>@admin</b>, <b>/admin</b>, or <b>.admin</b>.</p>
+        </div>
+        <div class="feature">
+            <h3>💬 Smart Inline Buttons</h3>
+            <p>Admins can quickly mark reports as <b>Handled</b>, <b>Investigating</b>, or <b>Ignored</b> — all in-chat.</p>
+        </div>
+        <div class="feature">
+            <h3>🛡️ Secure & VPS Ready</h3>
+            <p>Built with asynchronous Python and <b>python‑telegram‑bot</b> — fast, efficient, and secure for 24/7 uptime.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 Admin Alert Bot | Built with ❤️ using Python & Telegram API</p>
+</footer>
+
+<script>
+    // Simple animated gradient background
+    const colors = [
+        ['#141E30', '#243B55'],
+        ['#16222A', '#3A6073'],
+        ['#000046', '#1CB5E0']
+    ];
+    let step = 0, colorIndex = 0;
+    setInterval(() => {
+        const next = (colorIndex + 1) % colors.length;
+        const c1 = colors[colorIndex];
+        const c2 = colors[next];
+        document.body.style.background = `linear-gradient(135deg, ${c1[0]}, ${c2[1]})`;
+        colorIndex = next;
+        step++;
+    }, 4000);
+</script>
+
+</body>
+</html>
