@@ -128,15 +128,12 @@ from telegram.ext import (
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Load translations from JSON file
 with open("languages.json", "r", encoding="utf-8") as f:
     LANGUAGES = json.load(f)
 
 language_prefs = {}
-
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
 
-# === Language Selection ===
 async def select_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = [
         [InlineKeyboardButton("🇬🇧 English", callback_data="lang_en"),
@@ -155,7 +152,6 @@ async def language_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer(f"Language set to {lang.upper()}")
     await query.edit_message_text(f"✅ Language changed to {lang.upper()}!")
 
-# === Admin Action Buttons ===
 async def handle_admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     data = query.data
@@ -177,7 +173,6 @@ async def handle_admin_response(update: Update, context: ContextTypes.DEFAULT_TY
         parse_mode="HTML"
     )
 
-# === Main Mention Function ===
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
@@ -196,16 +191,24 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     reply_msg = (
-        f"<blockquote><b>{LANGUAGES[lang]['admin_attention']}</b></blockquote>\n"
         f"<blockquote><b><i>{LANGUAGES[lang]['report'].format(msg=cleaned_text, user=user_display)}</i></b></blockquote>\n\n"
     )
 
     admins = await context.bot.getChatAdministrators(chat_id)
-    mentions = [
-        f"🛡️ @{a.user.username}" for a in admins
-        if not a.is_anonymous and not a.user.is_bot and a.user.username
-    ]
-    reply_msg += "\n".join(mentions) if mentions else LANGUAGES[lang]["no_admins"]
+    mentions = []
+    for admin in admins:
+        user = admin.user
+        if admin.is_anonymous or user.is_bot:
+            continue
+        if user.username:
+            mentions.append(f"@{user.username}")
+        else:
+            mentions.append(user.first_name)
+
+    if mentions:
+        reply_msg += ", ".join(mentions) + "\n"
+    else:
+        reply_msg += LANGUAGES[lang]["no_admins"]
 
     buttons = [
         [
@@ -217,14 +220,11 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     markup = InlineKeyboardMarkup(buttons)
     await update.message.reply_html(reply_msg, reply_markup=markup)
 
-# === Run Bot ===
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-
     app.add_handler(CommandHandler("language", select_language))
     app.add_handler(CallbackQueryHandler(language_selected, pattern="^lang_"))
     app.add_handler(CommandHandler("admin", mention_admins))
     app.add_handler(MessageHandler(filters.Regex(r"(?i)(\.|@|\/)admin"), mention_admins))
     app.add_handler(CallbackQueryHandler(handle_admin_response, pattern="^(handled|investigating|ignored)$"))
-
     app.run_polling()
