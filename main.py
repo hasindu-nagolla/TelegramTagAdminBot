@@ -1,22 +1,17 @@
 import os
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder
-from media_handler import register_media_handlers
+from admin_mention import register_handlers
 
 # Load environment variables
 load_dotenv()
-
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-MAIN_GROUP_ID = int(os.getenv("MAIN_GROUP_ID"))
-ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID"))
 
-print("🚀 Telegram Tag Admin Bot starting...")
-print(f"Main Group ID: {MAIN_GROUP_ID}")
-print(f"Admin Group ID: {ADMIN_GROUP_ID}")
+def main():
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    register_handlers(app)
+    print("🤖 Admin Mention Bot is running...")
+    app.run_polling()
 
-app = ApplicationBuilder().token(BOT_TOKEN).build()
-
-# Pass group IDs when registering handlers
-register_media_handlers(app, MAIN_GROUP_ID, ADMIN_GROUP_ID)
-
-app.run_polling()
+if __name__ == "__main__":
+    main()
