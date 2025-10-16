@@ -1,10 +1,9 @@
-from telegram.ext import MessageHandler, CallbackQueryHandler, filters
+import os
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import ContextTypes, MessageHandler, CallbackQueryHandler, filters
 
-load_dotenv()
-
-MAIN_GROUP_ID = int(os.getenv("MAIN_GROUP_ID"))
-ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID"))
-
+MAIN_GROUP_ID = int(os.getenv("MAIN_GROUP_ID", 0))
+ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", 0))
 
 # === Forward Media from Main Group to Admin Group ===
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):

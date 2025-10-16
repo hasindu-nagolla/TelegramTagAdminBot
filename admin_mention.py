@@ -1,7 +1,7 @@
-from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler, filters
+import re
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler, ContextTypes, filters
 
-load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
 
