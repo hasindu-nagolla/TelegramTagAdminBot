@@ -9,6 +9,7 @@ from colorama import Fore, Style
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
+
 def print_animated_status():
     status = "🤖 Admin Mention Bot is online "
     for i in range(5):
@@ -18,9 +19,11 @@ def print_animated_status():
         time.sleep(0.4)
     print(Fore.RED + Style.BRIGHT + "\r🤖 Admin Mention Bot is ONLINE ✔️      ")
 
+
 def main():
     if not BOT_TOKEN:
-        print(Fore.RED + Style.BRIGHT + "❌ BOT_TOKEN not set in .env. Please configure it!")
+        print(Fore.RED + Style.BRIGHT +
+              "❌ BOT_TOKEN not set in .env. Please configure it!")
         return
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
@@ -28,6 +31,7 @@ def main():
 
     print_animated_status()
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
