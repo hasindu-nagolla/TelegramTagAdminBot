@@ -6,14 +6,13 @@ from telegram.ext import (
     filters,
     ContextTypes,
 )
-import os
-
-MAIN_GROUP_ID = int(os.getenv("MAIN_GROUP_ID"))
-ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID"))
 
 async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle photos, videos, documents, and links."""
-    if update.effective_chat.id != MAIN_GROUP_ID:
+    main_group_id = context.bot_data.get("MAIN_GROUP_ID")
+    admin_group_id = context.bot_data.get("ADMIN_GROUP_ID")
+
+    if update.effective_chat.id != main_group_id:
         return
 
     user = update.effective_user
@@ -23,14 +22,14 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Detect media or links
-    if message.photo or message.video or message.document or message.text and ("http" in message.text or "www" in message.text):
+    if message.photo or message.video or message.document or (message.text and ("http" in message.text or "www" in message.text)):
         # Send media/text to admin group
-        forwarded = await message.forward(chat_id=ADMIN_GROUP_ID)
+        forwarded = await message.forward(chat_id=admin_group_id)
 
         # Notify user in main group
         await message.reply_text("⏳ Waiting for admin approval...")
 
-        # Store metadata (optional)
+        # Store metadata (temporary memory)
         context.chat_data[forwarded.message_id] = {
             "user_id": user.id,
             "message_id": message.message_id,
@@ -38,7 +37,10 @@ async def handle_media(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def approve(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admins approve media."""
-    if update.effective_chat.id != ADMIN_GROUP_ID:
+    admin_group_id = context.bot_data.get("ADMIN_GROUP_ID")
+    main_group_id = context.bot_data.get("MAIN_GROUP_ID")
+
+    if update.effective_chat.id != admin_group_id:
         return
 
     reply = update.message.reply_to_message
@@ -51,16 +53,18 @@ async def approve(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No pending approval found.")
         return
 
-    user_id = data["user_id"]
     await context.bot.send_message(
-        chat_id=MAIN_GROUP_ID,
+        chat_id=main_group_id,
         text=f"✅ Approved by admin: {update.effective_user.first_name}",
         reply_to_message_id=data["message_id"],
     )
 
 async def reject(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Admins reject media."""
-    if update.effective_chat.id != ADMIN_GROUP_ID:
+    admin_group_id = context.bot_data.get("ADMIN_GROUP_ID")
+    main_group_id = context.bot_data.get("MAIN_GROUP_ID")
+
+    if update.effective_chat.id != admin_group_id:
         return
 
     reply = update.message.reply_to_message
@@ -73,18 +77,21 @@ async def reject(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("No pending approval found.")
         return
 
-    user_id = data["user_id"]
     await context.bot.send_message(
-        chat_id=MAIN_GROUP_ID,
+        chat_id=main_group_id,
         text=f"❌ Rejected by admin: {update.effective_user.first_name}",
         reply_to_message_id=data["message_id"],
     )
 
-def register_media_handlers(app: Application):
+def register_media_handlers(app: Application, main_group_id: int, admin_group_id: int):
     """Register message handlers for media."""
+    # Save IDs in bot_data for shared access
+    app.bot_data["MAIN_GROUP_ID"] = main_group_id
+    app.bot_data["ADMIN_GROUP_ID"] = admin_group_id
+
     app.add_handler(
         MessageHandler(
-            filters.Chat(MAIN_GROUP_ID)
+            filters.Chat(main_group_id)
             & (filters.PHOTO | filters.VIDEO | filters.Document.ALL | filters.TEXT),
             handle_media,
         )
