@@ -2,7 +2,6 @@ import re
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, MessageHandler, CallbackQueryHandler, ContextTypes, filters
 
-
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
 
 # === Handle Inline Button Clicks (Admins only) ===
