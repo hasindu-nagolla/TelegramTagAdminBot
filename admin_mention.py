@@ -1,48 +1,12 @@
 import re
 from colorama import init, Fore, Style
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import ContextTypes, CallbackQueryHandler, CommandHandler, MessageHandler, filters
+from telegram import Update
+from telegram.ext import ContextTypes, CommandHandler, MessageHandler, filters
 
 # Initialize colorama for terminal color output
 init(autoreset=True)
 
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
-
-# === Handle Inline Button Clicks (Admins only) ===
-
-
-async def handle_admin_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    data = query.data
-    user = query.from_user
-    chat = query.message.chat
-
-    chat_admins = await context.bot.getChatAdministrators(chat.id)
-    admin_ids = [
-        admin.user.id for admin in chat_admins if not admin.is_anonymous]
-
-    if user.id not in admin_ids:
-        await query.answer("Only admins can use these buttons.", show_alert=True)
-        return
-
-    status_map = {
-        "handled": "✅ Handled by admin.",
-        "investigating": "🕵 Investigating, please wait.",
-        "ignored": "❌ Report ignored.",
-    }
-
-    await query.answer(f"Status updated: {status_map[data]}")
-    await query.edit_message_text(
-        text=f"{query.message.text}\n\n<b>Admin Response:</b> {status_map[data]}",
-        parse_mode="HTML",
-    )
-
-    print(
-        Fore.GREEN
-        + Style.BRIGHT
-        + f"[ADMIN_RESPONSE] {user.first_name} responded '{data.upper()}' in chat_id {chat.id}"
-    )
-
 
 # === Main Mention Function ===
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -97,22 +61,10 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         reply_msg += "No visible human admins found to mention.\n"
 
-    # Inline buttons for admin response
-    keyboard = [
-        [
-            InlineKeyboardButton("✅ Handled", callback_data="handled"),
-            InlineKeyboardButton(
-                "🕵 Investigating", callback_data="investigating"),
-            InlineKeyboardButton("❌ Ignore", callback_data="ignored"),
-        ]
-    ]
-    markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_html(reply_msg, reply_markup=markup)
+    await update.message.reply_html(reply_msg)
 
 
 # === Function to register handlers in main.py ===
 def register_handlers(app):
     app.add_handler(CommandHandler("admin", mention_admins))
-    app.add_handler(MessageHandler(filters.Regex(
-        r"(?i)(\.|@|\/)admin"), mention_admins))
-    app.add_handler(CallbackQueryHandler(handle_admin_response))
+    app.add_handler(MessageHandler(filters.Regex(r"(?i)(\.|@|\/)admin"), mention_admins))
