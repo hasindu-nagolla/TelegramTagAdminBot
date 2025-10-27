@@ -1,3 +1,4 @@
+import html
 import re
 from colorama import init, Fore, Style
 from telegram import Update
@@ -18,9 +19,17 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cleaned_text = TRIGGER_PATTERN.sub("", message_text).strip()
 
     sender = update.effective_user
-    user_display = f"{sender.first_name}"
-    if sender.username:
-        user_display += f" (@{sender.username})"
+    sender_name = sender.full_name or sender.first_name or "Unknown user"
+    sender_username = sender.username
+
+    user_display_console = sender_name
+    if sender_username:
+        user_display_console += f" (@{sender_username})"
+
+    sender_name_html = html.escape(sender_name)
+    user_display = sender_name_html
+    if sender_username:
+        user_display += f" (@{html.escape(sender_username)})"
     notify_emoji = "🔔"
 
     # Guard condition if user sends empty mentions
@@ -36,12 +45,13 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(
         Fore.CYAN
         + Style.BRIGHT
-        + f"[ADMIN_TRIGGER] User: {user_display} | Message: \"{cleaned_text}\" | Chat ID: {chat_id}"
+        + f"[ADMIN_TRIGGER] User: {user_display_console} | Message: \"{cleaned_text}\" | Chat ID: {chat_id}"
     )
 
     # Build formatted reply message for Telegram
+    safe_message = html.escape(cleaned_text)
     reply_msg = (
-        f"<blockquote><b><i>\"{cleaned_text}\"</i></b>\nReported by: {user_display} {notify_emoji}</blockquote>\n\n"
+        f"<blockquote><b><i>\"{safe_message}\"</i></b>\nReported by: {user_display} {notify_emoji}</blockquote>\n\n"
     )
 
     # Filter valid human admins only
@@ -52,9 +62,12 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if admin.is_anonymous or user.is_bot:
             continue
         if user.username:
-            mentions.append(f"@{user.username}")
+            mentions.append(f"@{html.escape(user.username)}")
         else:
-            mentions.append(user.first_name)
+            display_name = user.full_name or user.first_name or "Admin"
+            mentions.append(
+                f'<a href="tg://user?id={user.id}">{html.escape(display_name)}</a>'
+            )
 
     if mentions:
         reply_msg += ", ".join(mentions) + "\n"
