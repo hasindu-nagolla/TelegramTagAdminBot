@@ -360,8 +360,8 @@
   function applyTheme(savedTheme) {
     const isLight = savedTheme === LIGHT;
     body.classList.toggle(LIGHT, isLight);
-    themeLabel.textContent = isLight ? 'Light Mode' : 'Dark Mode';
-    themeIcon.textContent = isLight ? '☀️' : '🌙';
+    themeLabel.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+    themeIcon.textContent = isLight ? '🌙' : '☀️';
     themeToggle.setAttribute('aria-pressed', String(isLight));
   }
 
