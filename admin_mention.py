@@ -3,14 +3,14 @@ import re
 from colorama import init, Fore, Style
 from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, MessageHandler, filters
-from telegram.utils.helpers import mention_html
 
-# Initialize colorama for terminal color output
+# Initialize colorama for VPS console output colors
 init(autoreset=True)
 
+# Pattern to detect admin trigger words
 TRIGGER_PATTERN = re.compile(r"(?i)(\.|@|\/)admin")
 
-# === Main Mention Function ===
+# === Main mention function ===
 async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
@@ -23,12 +23,12 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     sender_name = sender.full_name or sender.first_name or "Unknown user"
     sender_username = sender.username
 
-    # Display for console logs
+    # For console display
     user_display_console = sender_name
     if sender_username:
         user_display_console += f" (@{sender_username})"
 
-    # Telegram-safe display
+    # For telegram formatted display
     sender_name_html = html.escape(sender_name)
     user_display = sender_name_html
     if sender_username:
@@ -36,54 +36,55 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     notify_emoji = "🔔"
 
-    # Guard condition — require a reason/message
+    # Prevent empty admin calls
     if not cleaned_text:
         warning_msg = (
-            f"<blockquote><b>⚠️ You can't mention admins without a reason.</b></blockquote>\n"
-            f"<blockquote>Please include a message. Example:<br><b>@admin issue here</b></blockquote>"
+            f"<blockquote><b>⚠️ Please provide a reason when tagging admins.</b></blockquote>\n"
+            f"<blockquote>Example: <b>@admin There's a problem here.</b></blockquote>"
         )
         await update.message.reply_html(warning_msg)
         return
 
-    # Console log
+    # Log to VPS console
     print(
         Fore.CYAN + Style.BRIGHT +
-        f"[ADMIN_TRIGGER] User: {user_display_console} | Message: \"{cleaned_text}\" | Chat ID: {chat_id}"
+        f"[ADMIN ALERT] User: {user_display_console} | Message: \"{cleaned_text}\" | Chat ID: {chat_id}"
     )
 
-    # Prepare formatted message
+    # Escape text
     safe_message = html.escape(cleaned_text)
+
+    # Blockquote (quoted user message)
     reply_msg = (
         f"<blockquote><b><i>\"{safe_message}\"</i></b>\n"
-        f"Reported by: {user_display} {notify_emoji}</blockquote>\n\n"
+        f"Reported by: {user_display} {notify_emoji}</blockquote>\n"
     )
 
-    # Get human admins and build REAL mention notifications
+    # Get human admins & build REAL (@) notification mentions
     admins = await context.bot.getChatAdministrators(chat_id)
     mentions = []
 
     for admin in admins:
         user = admin.user
-
-        # Skip anonymous admins & bots
         if admin.is_anonymous or user.is_bot:
-            continue
+            continue  # ignore BOT admins and hidden admins
 
-        # ALWAYS Mention using User ID → Triggers REAL notification
         display_name = user.full_name or user.first_name or "Admin"
+
+        # ✅ This is the key: using user-id mention → triggers REAL notification
         mentions.append(f'<a href="tg://user?id={user.id}">{html.escape(display_name)}</a>')
-        main
 
+    # Mentions MUST be outside blockquote for Telegram to notify
     if mentions:
-        reply_msg += ", ".join(mentions) + "\n"
+        reply_msg += "⚠️ Attention: " + ", ".join(mentions)
     else:
-        reply_msg += "No visible human admins found.\n"
+        reply_msg += "No visible human admins found."
 
-    # Reply to original message (Improves notification delivery)
+    # Reply directly to the original message to improve visibility
     await update.message.reply_html(reply_msg, reply_to_message_id=update.message.message_id)
 
 
-# === Handler Registration ===
+# === Register handlers in main bot file ===
 def register_handlers(app):
     app.add_handler(CommandHandler("admin", mention_admins))
     app.add_handler(MessageHandler(filters.Regex(r"(?i)(\.|@|\/)admin"), mention_admins))
