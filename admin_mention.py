@@ -3,6 +3,7 @@ import re
 from colorama import init, Fore, Style
 from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, MessageHandler, filters
+from telegram.utils.helpers import mention_html
 
 # Initialize colorama for terminal color output
 init(autoreset=True)
@@ -15,7 +16,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     chat_id = update.effective_chat.id
-    message_text = update.message.text
+    message_text = update.message.text or ""
     cleaned_text = TRIGGER_PATTERN.sub("", message_text).strip()
 
     sender = update.effective_user
@@ -61,13 +62,8 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = admin.user
         if admin.is_anonymous or user.is_bot:
             continue
-        if user.username:
-            mentions.append(f"@{html.escape(user.username)}")
-        else:
-            display_name = user.full_name or user.first_name or "Admin"
-            mentions.append(
-                f'<a href="tg://user?id={user.id}">{html.escape(display_name)}</a>'
-            )
+        display_name = user.full_name or user.first_name or "Admin"
+        mentions.append(mention_html(user.id, display_name))
 
     if mentions:
         reply_msg += ", ".join(mentions) + "\n"
