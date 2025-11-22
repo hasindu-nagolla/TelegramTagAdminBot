@@ -3,7 +3,7 @@ import sys
 import time
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder
-from admin_mention import register_handlers
+from handlers import admin_mention, start_command
 from colorama import Fore, Style
 
 load_dotenv()
@@ -27,7 +27,12 @@ def main():
         return
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-    register_handlers(app)
+    
+    # Register start command handler
+    start_command.register_handlers(app)
+    
+    # Register admin mention handler
+    admin_mention.register_handlers(app)
 
     print_animated_status()
     app.run_polling()

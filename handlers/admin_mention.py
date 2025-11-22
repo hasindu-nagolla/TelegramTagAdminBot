@@ -54,7 +54,8 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if user.username:
             mentions.append(f"@{user.username}")
         else:
-            mentions.append(user.first_name)
+            # Use HTML link format to mention users without username
+            mentions.append(f"<a href='tg://user?id={user.id}'>{user.first_name}</a>")
 
     if mentions:
         reply_msg += ", ".join(mentions) + "\n"
@@ -64,7 +65,7 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_html(reply_msg)
 
 
-# === Function to register handlers in main.py ===
+# === Function to register handlers ===
 def register_handlers(app):
     app.add_handler(CommandHandler("admin", mention_admins))
     app.add_handler(MessageHandler(filters.Regex(r"(?i)(\.|@|\/)admin"), mention_admins))
