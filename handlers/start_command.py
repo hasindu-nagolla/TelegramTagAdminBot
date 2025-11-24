@@ -1,5 +1,7 @@
+import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CommandHandler
+from telegram.error import TimedOut, NetworkError
 from colorama import Fore, Style
 
 
@@ -48,11 +50,24 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"[START_COMMAND] User: {user.first_name} (@{user.username or 'no_username'}) | ID: {user.id}"
     )
     
-    # Send text message with inline buttons (no image)
-    await update.message.reply_html(
-        welcome_text,
-        reply_markup=reply_markup
-    )
+    # Send text message with inline buttons (no image) with retry logic
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            await update.message.reply_html(
+                welcome_text,
+                reply_markup=reply_markup
+            )
+            break
+        except TimedOut:
+            if attempt < max_retries - 1:
+                print(Fore.YELLOW + f"[TIMEOUT] Retry {attempt + 1}/{max_retries} for start command")
+                await asyncio.sleep(1)
+            else:
+                print(Fore.RED + f"[ERROR] Failed to send start message after {max_retries} attempts")
+        except Exception as e:
+            print(Fore.RED + f"[ERROR] Failed to send start message: {str(e)}")
+            break
 
 
 async def help_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):

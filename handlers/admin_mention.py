@@ -1,7 +1,9 @@
 import re
+import asyncio
 from colorama import init, Fore, Style
 from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, MessageHandler, filters
+from telegram.error import TimedOut, NetworkError
 
 # Initialize colorama for terminal color output
 init(autoreset=True)
@@ -29,7 +31,10 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"<blockquote><b>⚠️ You can't mention admins without a reason.</b></blockquote>\n"
             f"<blockquote>Please include a message. Example: <b>@admin your complaint</b></blockquote>"
         )
-        await update.message.reply_html(warning_msg)
+        try:
+            await update.message.reply_html(warning_msg)
+        except (TimedOut, NetworkError) as e:
+            print(Fore.RED + f"[ERROR] Failed to send warning: {str(e)}")
         return
 
     # Print VPS-side report in color
@@ -62,7 +67,24 @@ async def mention_admins(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         reply_msg += "No visible human admins found to mention.\n"
 
-    await update.message.reply_html(reply_msg)
+    # Send message with retry logic for timeout errors
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            await update.message.reply_html(reply_msg)
+            break
+        except TimedOut:
+            if attempt < max_retries - 1:
+                print(Fore.YELLOW + f"[TIMEOUT] Retry {attempt + 1}/{max_retries} for chat {chat_id}")
+                await asyncio.sleep(1)  # Wait 1 second before retry
+            else:
+                print(Fore.RED + f"[ERROR] Failed to send message after {max_retries} attempts")
+        except NetworkError as e:
+            print(Fore.RED + f"[NETWORK_ERROR] {str(e)}")
+            break
+        except Exception as e:
+            print(Fore.RED + f"[ERROR] Unexpected error: {str(e)}")
+            break
 
 
 # === Function to register handlers ===
