@@ -36,7 +36,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("🌐 Website", url="http://tiny.cc/tagadmins")
         ],
         [
-            InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/hasindu_2_0"),
+            InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/@lakzexe"),
             InlineKeyboardButton("⭐ GitHub", url="https://github.com/hasindu-nagolla/TelegramTagAdminBot")
         ]
     ]
@@ -81,7 +81,7 @@ async def help_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     keyboard = [
         [InlineKeyboardButton("🔙 Back", callback_data="back_to_start")],
-        [InlineKeyboardButton("👨‍💻 Contact Developer", url="https://t.me/hasindu_2_0")]
+        [InlineKeyboardButton("👨‍💻 Contact Developer", url="https://t.me/@lakzexe")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     
@@ -125,7 +125,7 @@ async def back_to_start_callback(update: Update, context: ContextTypes.DEFAULT_T
             InlineKeyboardButton("🌐 Website", url="http://tiny.cc/tagadmins")
         ],
         [
-            InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/hasindu_2_0"),
+            InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/@lakzexe"),
             InlineKeyboardButton("⭐ GitHub", url="https://github.com/hasindu-nagolla/TelegramTagAdminBot")
         ]
     ]
