@@ -35,7 +35,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton("➕ Add to Group", url="https://t.me/AtzioBot?startgroup=true"),
-            InlineKeyboardButton("🌐 Website", url="http://atziobot.hasindunagolla.live/")
+            InlineKeyboardButton("🌐 Website", url="https://atziobot.hasindunagolla.live/")
         ],
         [
             InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/lakzexe"),
@@ -137,7 +137,7 @@ async def back_to_start_callback(update: Update, context: ContextTypes.DEFAULT_T
     keyboard = [
         [
             InlineKeyboardButton("➕ Add to Group", url="https://t.me/AtzioBot?startgroup=true"),
-            InlineKeyboardButton("🌐 Website", url="http://atziobot.hasindunagolla.live/")
+            InlineKeyboardButton("🌐 Website", url="https://atziobot.hasindunagolla.live/")
         ],
         [
             InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/lakzexe"),
