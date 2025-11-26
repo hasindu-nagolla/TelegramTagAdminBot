@@ -34,12 +34,12 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Inline keyboard buttons
     keyboard = [
         [
-            InlineKeyboardButton("➕ Add to Group", url="https://t.me/NovaMentionBot?startgroup=true"),
-            InlineKeyboardButton("🌐 Website", url="http://tiny.cc/tagadmins")
+            InlineKeyboardButton("➕ Add to Group", url="https://t.me/AtzioBot?startgroup=true"),
+            InlineKeyboardButton("🌐 Website", url="http://atziobot.hasindunagolla.live/")
         ],
         [
             InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/lakzexe"),
-            InlineKeyboardButton("⭐ GitHub", url="https://github.com/hasindu-nagolla/TelegramTagAdminBot")
+            InlineKeyboardButton("⭐ GitHub", url="https://github.com/hasindu-nagolla/telegram-admin-mention-bot")
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -136,12 +136,12 @@ async def back_to_start_callback(update: Update, context: ContextTypes.DEFAULT_T
     
     keyboard = [
         [
-            InlineKeyboardButton("➕ Add to Group", url="https://t.me/NovaMentionBot?startgroup=true"),
-            InlineKeyboardButton("🌐 Website", url="http://tiny.cc/tagadmins")
+            InlineKeyboardButton("➕ Add to Group", url="https://t.me/AtzioBot?startgroup=true"),
+            InlineKeyboardButton("🌐 Website", url="http://atziobot.hasindunagolla.live/")
         ],
         [
             InlineKeyboardButton("👨‍💻 Developer", url="https://t.me/lakzexe"),
-            InlineKeyboardButton("⭐ GitHub", url="https://github.com/hasindu-nagolla/TelegramTagAdminBot")
+            InlineKeyboardButton("⭐ GitHub", url="https://github.com/hasindu-nagolla/telegram-admin-mention-bot")
         ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
