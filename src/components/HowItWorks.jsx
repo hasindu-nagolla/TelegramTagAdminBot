@@ -14,7 +14,7 @@ function HowItWorks() {
 
       <div className="text-center">
         <a
-          href="https://t.me/NovaMentionBot"
+          href="https://t.me/AtzioBot"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-accent text-black font-semibold py-3 px-8 rounded-full transition-all duration-300 hover:bg-[#00acc1] hover:-translate-y-0.5 hover:shadow-lg"

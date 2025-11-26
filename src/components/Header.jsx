@@ -10,7 +10,7 @@ function Header() {
         style={{ boxShadow: '0 0 30px rgba(0, 188, 212, 0.4)' }}
       />
       <h1 className="text-4xl font-bold mt-4 text-accent">
-        Admin Alert (@NovaMentionBot)
+        Admin Alert (@AtzioBot)
       </h1>
       <p className="text-lg text-subtext mt-2">
         Your smart Telegram assistant for notifying group admins instantly 🚨
